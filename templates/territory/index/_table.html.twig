@@ -1,0 +1,86 @@
+<table class="table table-striped caption-top">
+    <caption>{{ 'cm.ui.count_territories'|trans({':count': pagination.totalItemCount}) }}</caption>
+    <thead>
+    <tr>
+        {# sorting of properties based on query components #}
+        <th>{{ knp_pagination_sortable(pagination, 'cm.ui.number'|trans, 't.number') }}</th>
+        <th{% if pagination.isSorted('t.area') %} class="sorted"{% endif %}>
+            {{ knp_pagination_sortable(pagination, 'cm.ui.area'|trans, 'a.name', {'translationDomain': 'cm'}) }}
+        </th>
+        <th>
+            {{ 'cm.ui.status'|trans }}
+        </th>
+        <th{% if pagination.isSorted('latest_assignment.assignmentDate') %} class="sorted"{% endif %}>
+            {{ knp_pagination_sortable(pagination, 'cm.ui.assignment_date'|trans, 'latest_assignment.assignmentDate') }}
+        </th>
+        <th>
+            {{ 'cm.ui.expiration_date'|trans }}
+        </th>
+        <th{% if pagination.isSorted('latest_assignment.brother') %} class="sorted"{% endif %}>
+            {{ knp_pagination_sortable(pagination, 'cm.ui.assigned_to'|trans, 'latest_assignment.brother') }}
+        </th>
+        <th{% if pagination.isSorted('latest_assignment.revocationDate') %} class="sorted"{% endif %}>
+            {{ knp_pagination_sortable(pagination, 'cm.ui.latest_assignment_revocation_date'|trans, 'latest_assignment.revocationDate') }}
+        </th>
+        <th{% if pagination.isSorted('latest_assignment.brother') %} class="sorted"{% endif %}>
+            {{ knp_pagination_sortable(pagination, 'cm.ui.latest_assignment_assigned_to'|trans, 'latest_assignment.brother') }}
+        </th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    {# @var territory \CongregationManager\Domain\Territory\Model\Territory #}
+    {% for territory in pagination %}
+        {% set currentAssignment = territory.currentAssignment %}
+        {% set latestAssignment = territory.latestAssignment %}
+        <tr>
+            <td>
+                {{ territory.number }}
+            </td>
+            <td>
+                {{ territory.area.name }}
+            </td>
+            <td>
+                {% if territory.available %}
+                    <span class="badge bg-success">{{ 'cm.ui.not_assigned'|trans }}</span>
+                {% else %}
+                    <span class="badge bg-secondary">{{ 'cm.ui.assigned'|trans }}</span>
+                {% endif %}
+            </td>
+            <td>
+                {{ currentAssignment ? currentAssignment.assignmentDate|format_date : '' }}
+            </td>
+            <td>
+                {% if currentAssignment %}
+                    <span class="badge bg-{{ currentAssignment.expirationDate < date() ? 'danger text-white' : 'primary text-white' }} text-dark">
+                                            {{ currentAssignment.expirationDate|format_date }}
+                                        </span>
+                {% endif %}
+            </td>
+            <td>
+                {{ currentAssignment ? currentAssignment.brother : '' }}
+            </td>
+            <td>
+                {{ latestAssignment ? latestAssignment.revocationDate|format_date : '' }}
+            </td>
+            <td>
+                {{ latestAssignment ? latestAssignment.brother : '' }}
+            </td>
+            <td>
+                <a href="{{ path('app_territory_show', {id: territory.id}) }}">
+                    {{ 'cm.ui.show'|trans }}
+                </a>
+                <a href="{{ path('app_territory_assignment_create', {territoryId: territory.id}) }}">
+                    {{ 'cm.ui.assign'|trans }}
+                </a>
+            </td>
+        </tr>
+    {% else %}
+        <tr>
+            <td colspan="9" class="text-center">
+                {{ 'cm.ui.no_results'|trans }}
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
