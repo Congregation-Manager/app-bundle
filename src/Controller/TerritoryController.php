@@ -63,7 +63,7 @@ final class TerritoryController extends AbstractController
             ]
         );
 
-        return $this->renderForm('@CongregationManagerApp/territory/index.html.twig', [
+        return $this->render('@CongregationManagerApp/territory/index.html.twig', [
             'pagination' => $pagination,
             'form' => $form,
         ]);
@@ -123,12 +123,12 @@ final class TerritoryController extends AbstractController
 
             // Send the temporal file as response (as an attachment)
             $response = new BinaryFileResponse($tempFile);
-            $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $fileName,);
+            $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $fileName);
 
             return $response;
         }
 
-        return $this->renderForm('@CongregationManagerApp/territory/components/s_13.html.twig', [
+        return $this->render('@CongregationManagerApp/territory/components/s_13.html.twig', [
             'form' => $form,
         ]);
     }
